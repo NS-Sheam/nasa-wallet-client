@@ -4,6 +4,7 @@ export const tagTypes = {
   agent: "agent",
   customer: "customer",
   transaction: "transaction",
+  dashboard: "dashboard",
 };
 
 export const tagTypeList = Object.values(tagTypes);

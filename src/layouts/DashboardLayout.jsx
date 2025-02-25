@@ -1,6 +1,6 @@
 import { Link, Outlet } from "react-router-dom";
 import { useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaWallet, FaMoneyBillAlt, FaCoins } from "react-icons/fa";
 import { useAppSelector } from "../redux/hooks";
 import { logOut, selectCurrentUser } from "../redux/features/auth.Slice";
 import logout from "../utils/logout";
@@ -82,29 +82,48 @@ const DashboardLayout = () => {
                     </button>
 
                     {/* Balance Display */}
-                    <div className="flex flex-col items-end space-x-2">
-                        <span className="text-gray-700">Balance</span>
-                        <button
-                            onClick={toggleBalanceVisibility}
-                            className="font-bold text-blue-600"
-                        >
-                            {user?.role === "admin" ? (
-                                // Admin: Always show balance and total system money
-                                <>
-                                    <span>{myInfo?.income?.toFixed(2) || 0} Taka (Income)</span>
-                                    <span className="ml-2">
-                                        {myInfo?.totalSystemMoney?.toFixed(2) || 0} Taka (Total)
-                                    </span>
-                                </>
-                            ) : (
-                                // User or Agent: Blur balance initially
-                                <span
-                                    className={`${isBalanceVisible ? "" : "filter blur-sm"}`}
-                                >
-                                    {myInfo?.balance?.toFixed(2) || 0} Taka
-                                </span>
-                            )}
-                        </button>
+                    <div className="flex items-center space-x-4">
+                        {user?.role === "admin" ? (
+                            // Admin: Show income and total system money
+                            <>
+                                <div className="flex items-center space-x-2">
+                                    <FaMoneyBillAlt className="w-5 h-5 text-green-500" />
+                                    <div>
+                                        <p className="text-sm text-gray-600">Income</p>
+                                        <p className="font-bold text-blue-600">
+                                            {myInfo?.income?.toFixed(2) || 0} Taka
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <FaCoins className="w-5 h-5 text-purple-500" />
+                                    <div>
+                                        <p className="text-sm text-gray-600">Total Money</p>
+                                        <p className="font-bold text-blue-600">
+                                            {myInfo?.totalSystemMoney?.toFixed(2) || 0} Taka
+                                        </p>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            // User or Agent: Show balance (blurred initially)
+                            <div className="flex items-center space-x-2">
+                                <FaWallet className="w-5 h-5 text-blue-500" />
+                                <div>
+                                    <p className="text-sm text-gray-600">Balance</p>
+                                    <button
+                                        onClick={toggleBalanceVisibility}
+                                        className="font-bold text-blue-600"
+                                    >
+                                        <span
+                                            className={`${isBalanceVisible ? "" : "filter blur-sm"}`}
+                                        >
+                                            {myInfo?.balance?.toFixed(2) || 0} Taka
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -138,23 +157,31 @@ const DashboardLayout = () => {
                         <p className="text-sm text-gray-700">Your Balance</p>
                         <button
                             onClick={toggleBalanceVisibility}
-                            className="text-xl font-bold text-blue-600 text-left"
+                            className="font-bold text-blue-600 text-left"
                         >
                             {user?.role === "admin" ? (
-                                // Admin: Always show balance and total system money
+
                                 <>
-                                    <span>{myInfo?.income?.toFixed(2) || 0} Taka (Income)</span>
-                                    <span className="ml-2">
-                                        {myInfo?.totalSystemMoney?.toFixed(2) || 0} Taka (Total)
-                                    </span>
+                                    <div className="flex items-center space-x-2">
+                                        <FaMoneyBillAlt className="w-5 h-5 text-green-500" />
+                                        <span>{myInfo?.income?.toFixed(2) || 0} Taka (Income)</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 mt-2">
+                                        <FaCoins className="w-5 h-5 text-purple-500" />
+                                        <span>
+                                            {myInfo?.totalSystemMoney?.toFixed(2) || 0} Taka (Total)
+                                        </span>
+                                    </div>
                                 </>
                             ) : (
-                                // User or Agent: Blur balance initially
-                                <span
-                                    className={`${isBalanceVisible ? "" : "filter blur-sm"}`}
-                                >
-                                    {myInfo?.balance?.toFixed(2) || 0} Taka
-                                </span>
+                                <div className="flex items-center space-x-2">
+                                    <FaWallet className="w-5 h-5 text-blue-500" />
+                                    <span
+                                        className={`${isBalanceVisible ? "" : "filter blur-sm"}`}
+                                    >
+                                        {myInfo?.balance?.toFixed(2) || 0} Taka
+                                    </span>
+                                </div>
                             )}
                         </button>
                     </div>

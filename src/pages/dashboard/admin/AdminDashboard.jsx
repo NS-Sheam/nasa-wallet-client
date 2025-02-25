@@ -1,14 +1,25 @@
-const AdminDashboard = () => {
+import DashboardCard from "../../../components/DashboardCard";
+import { useGetMyInfoQuery } from "../../../redux/api/auth.api";
+import { useGetAdminDashboardDataQuery } from "../../../redux/api/dashboard.api";
 
+const AdminDashboard = () => {
+    const { data: myData, isLoading: myDataLoading } = useGetMyInfoQuery();
+    const { data: dashboardData, isLoading: isDashboardDataLoading } = useGetAdminDashboardDataQuery();
+
+    const myInfo = myData?.data;
     const stats = {
-        totalUsers: 1200,
-        totalAgents: 150,
-        totalBalance: 500000,
-        totalIncome: 200000,
-        pendingRequests: 12,
-        approvedRequests: 85,
-        rejectedRequests: 10,
+        totalUsers: dashboardData?.totalUsers || 0,
+        totalAgents: dashboardData?.totalAgents || 0,
+        totalBalance: dashboardData?.totalBalance || 0,
+        totalIncome: dashboardData?.totalIncome || 0,
+        pendingRequests: dashboardData?.pendingRequests || 0,
+        approvedRequests: dashboardData?.approvedRequests || 0,
+        rejectedRequests: dashboardData?.totalSystemMoneyRequests - (dashboardData?.approvedRequests || 0) - (dashboardData?.pendingRequests || 0) || 0,
     };
+
+    if (isDashboardDataLoading) {
+        return <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">Loading...</div>;
+    }
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
@@ -16,70 +27,30 @@ const AdminDashboard = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Total Users */}
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-700">Total Users</h3>
-                        <p className="text-2xl font-bold text-blue-600">{stats.totalUsers}</p>
-                    </div>
-                    <span className="text-blue-500 text-3xl">👥</span>
-                </div>
+                <DashboardCard title="Total Users" value={stats.totalUsers} color="blue" icon="👥" />
 
                 {/* Total Agents */}
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-700">Total Agents</h3>
-                        <p className="text-2xl font-bold text-green-600">{stats.totalAgents}</p>
-                    </div>
-                    <span className="text-green-500 text-3xl">🕵️‍♂️</span>
-                </div>
+                <DashboardCard title="Total Agents" value={stats.totalAgents} color="green" icon="🕵️‍♂️" />
 
                 {/* Total Balance */}
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-700">Total Balance</h3>
-                        <p className="text-2xl font-bold text-purple-600">{stats.totalBalance} Taka</p>
-                    </div>
-                    <span className="text-purple-500 text-3xl">💰</span>
-                </div>
+                <DashboardCard title="Total Balance" value={`${stats.totalBalance} Taka`} color="purple" icon="💰" />
 
                 {/* Total Income */}
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-700">Total Income</h3>
-                        <p className="text-2xl font-bold text-yellow-600">{stats.totalIncome} Taka</p>
-                    </div>
-                    <span className="text-yellow-500 text-3xl">📈</span>
-                </div>
+                <DashboardCard title="Total Income" value={`${stats.totalIncome} Taka`} color="yellow" icon="📈" />
 
                 {/* Pending Requests */}
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-700">Pending Requests</h3>
-                        <p className="text-2xl font-bold text-orange-600">{stats.pendingRequests}</p>
-                    </div>
-                    <span className="text-orange-500 text-3xl">⏳</span>
-                </div>
+                <DashboardCard title="Pending Requests" value={stats.pendingRequests} color="orange" icon="⏳" />
 
                 {/* Approved Requests */}
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-700">Approved Requests</h3>
-                        <p className="text-2xl font-bold text-green-600">{stats.approvedRequests}</p>
-                    </div>
-                    <span className="text-green-500 text-3xl">✅</span>
-                </div>
+                <DashboardCard title="Approved Requests" value={stats.approvedRequests} color="green" icon="✅" />
 
                 {/* Rejected Requests */}
-                <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-semibold text-gray-700">Rejected Requests</h3>
-                        <p className="text-2xl font-bold text-red-600">{stats.rejectedRequests}</p>
-                    </div>
-                    <span className="text-red-500 text-3xl">❌</span>
-                </div>
+                <DashboardCard title="Rejected Requests" value={stats.rejectedRequests} color="red" icon="❌" />
             </div>
         </div>
     );
 };
+
+
 
 export default AdminDashboard;
