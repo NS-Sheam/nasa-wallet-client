@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useCreateUserMutation } from "../../redux/api/auth.api";
+import Logo from "../../components/Logo";
 
 const Register = () => {
     const {
@@ -52,7 +53,7 @@ const Register = () => {
             }
 
             toast.update(toastId, {
-                render: "Registered successfully!",
+                render: `Registered successfully! ${accountType === "user" ? "Please login to continue." : "Your account is under review."}`,
                 type: "success",
                 isLoading: false,
                 autoClose: 3000,
@@ -70,11 +71,11 @@ const Register = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-blue-600">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-blue-600 py-4 md:py-12">
             <div className="w-full max-w-md p-8 space-y-6 rounded-lg shadow-2xl bg-white">
                 <div className="text-center">
-                    <h1 className="text-4xl font-bold text-blue-600">Money Wallet</h1>
-                    <p className="text-gray-600 mt-2">Secure and Fast Transactions</p>
+                    <Logo />
+
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

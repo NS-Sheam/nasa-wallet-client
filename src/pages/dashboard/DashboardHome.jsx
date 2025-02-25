@@ -14,7 +14,7 @@ const DashboardHome = () => {
         totalCashInRequests: dashboardData?.totalCashInRequests || 0,
         totalCashOutRequests: dashboardData?.totalCashOutRequests || 0,
         totalTransactions: dashboardData?.totalTransactions || 0,
-        customerBalance: dashboardData?.customerBalance || 0,
+        customerBalance: dashboardData?.customerBalance.toFixed(2) || 0,
         pendingRequests: dashboardData?.pendingRequests || 0,
         approvedRequests: dashboardData?.approvedRequests || 0,
     };

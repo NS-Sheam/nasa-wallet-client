@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useCashOutMutation } from "../../../redux/api/transaction.api";
 import { toast } from "react-toastify";
 import { useGetMyInfoQuery } from "../../../redux/api/auth.api";
+import Logo from "../../../components/Logo";
 
 const CashOut = () => {
     const {
@@ -60,11 +61,7 @@ const CashOut = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="w-full max-w-md p-8 space-y-6 rounded-lg shadow-2xl bg-white border border-gray-200">
-                {/* Logo or App Name */}
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold text-blue-600">Money Wallet</h1>
-                    <p className="text-gray-600 mt-2">Secure and Fast Transactions</p>
-                </div>
+                <Logo />
 
                 {/* Cash Out Form */}
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -107,7 +104,7 @@ const CashOut = () => {
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            Amount
+                            Password
                         </label>
                         <input
                             type="number"

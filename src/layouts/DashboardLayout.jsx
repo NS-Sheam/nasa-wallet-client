@@ -1,20 +1,39 @@
-import { Link, Outlet } from "react-router-dom";
-import { useState } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { FaBars, FaTimes, FaWallet, FaMoneyBillAlt, FaCoins } from "react-icons/fa";
 import { useAppSelector } from "../redux/hooks";
-import { logOut, selectCurrentUser } from "../redux/features/auth.Slice";
+import { selectCurrentUser } from "../redux/features/auth.Slice";
 import logout from "../utils/logout";
 import { useGetMyInfoQuery } from "../redux/api/auth.api";
 import { useDispatch } from "react-redux";
+import Logo from "../components/Logo";
+import { toast } from "react-toastify";
 
 const DashboardLayout = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [isBalanceVisible, setIsBalanceVisible] = useState(false); // State for balance visibility
+    const [isBalanceVisible, setIsBalanceVisible] = useState(false);
     const user = useAppSelector(selectCurrentUser);
+    const navigate = useNavigate();
+    const { data, refetch, isError, error } = useGetMyInfoQuery();
+    useEffect(() => {
+        if (isError) {
+            toast.error(error?.data?.message || "Session Expired");
+            handleLogout();
+            navigate("/login");
+        }
+    }, [error]);
+    useEffect(() => {
+        if (user) {
+            refetch();
+        }
+    }, [user, refetch]);
 
-    const { data } = useGetMyInfoQuery();
-    const dispatch = useDispatch();
+
+
     const myInfo = data?.data;
+
+
+
 
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen);
@@ -22,13 +41,14 @@ const DashboardLayout = () => {
 
     const handleLogout = () => {
         logout();
-        dispatch(logOut());
-        window.location.reload();
+
     };
 
     const toggleBalanceVisibility = () => {
         setIsBalanceVisible(!isBalanceVisible);
     };
+
+
 
     const menuItems = [
         ...(user?.role === "customer"
@@ -36,8 +56,10 @@ const DashboardLayout = () => {
                 { label: "Home", path: "/customer/dashboard" },
                 { label: "Send Money", path: "/customer/send-money" },
                 { label: "Cash Out", path: "/customer/cash-out" },
-                { label: "Cash In", path: "/customer/cash-in" },
+                // { label: "Cash In", path: "/customer/cash-in" },
                 { label: "Transactions", path: "/customer/transactions" },
+                { label: "Change Password", path: "/customer/change-password" },
+                { label: "Profile", path: "/customer/profile" },
             ]
             : []),
         ...(user?.role === "agent"
@@ -46,6 +68,8 @@ const DashboardLayout = () => {
                 { label: "Cash In", path: "/agent/cash-in" },
                 { label: "Cash Out", path: "/agent/cash-out" },
                 { label: "Balance Request", path: "/agent/balance-request" },
+                { label: "Change Password", path: "/agent/change-password" },
+                { label: "Profile", path: "/agent/profile" },
             ]
             : []),
         ...(user?.role === "admin"
@@ -56,11 +80,15 @@ const DashboardLayout = () => {
                 { label: "Transactions", path: "/admin/transactions" },
                 { label: "Balance Requests", path: "/admin/balance-requests" },
                 { label: "Withdraw Requests", path: "/admin/withdraw-requests" },
+                { label: "Change Password", path: "/admin/change-password" },
+                { label: "Profile", path: "/admin/profile" },
             ]
             : []),
-        { label: "Profile", path: "/dashboard/profile" },
         { label: "Logout", path: "/login", action: handleLogout },
     ];
+
+
+
 
     return (
         <div className="drawer">
@@ -83,7 +111,10 @@ const DashboardLayout = () => {
 
                     {/* Balance Display */}
                     <div className="flex items-center space-x-4">
-                        {user?.role === "admin" ? (
+                        {(user?.role === "admin"
+                            || user?.role === "agent"
+
+                        ) ? (
                             // Admin: Show income and total system money
                             <>
                                 <div className="flex items-center space-x-2">
@@ -100,13 +131,17 @@ const DashboardLayout = () => {
                                     <div>
                                         <p className="text-sm text-gray-600">Total Money</p>
                                         <p className="font-bold text-blue-600">
-                                            {myInfo?.totalSystemMoney?.toFixed(2) || 0} Taka
+                                            {
+                                                myInfo?.balance?.toFixed(2)
+                                                || myInfo?.totalSystemMoney?.toFixed(2)
+                                                || 0
+                                            } Taka
                                         </p>
                                     </div>
                                 </div>
                             </>
                         ) : (
-                            // User or Agent: Show balance (blurred initially)
+
                             <div className="flex items-center space-x-2">
                                 <FaWallet className="w-5 h-5 text-blue-500" />
                                 <div>
@@ -148,9 +183,12 @@ const DashboardLayout = () => {
                         </button>
                     </div>
 
-                    <h1 className="text-2xl font-bold text-center mb-6 text-blue-600">
-                        Money Wallet
-                    </h1>
+
+                    <Logo
+                        textClassName="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                        iconClassName="w-8 h-8 text-blue-600"
+                        isTagline={false}
+                    />
 
                     {/* Balance Display in Sidebar */}
                     <div className="mb-6 p-4 bg-blue-50 rounded-lg">
@@ -159,7 +197,9 @@ const DashboardLayout = () => {
                             onClick={toggleBalanceVisibility}
                             className="font-bold text-blue-600 text-left"
                         >
-                            {user?.role === "admin" ? (
+                            {(user?.role === "admin" ||
+                                user?.role === "agent"
+                            ) ? (
 
                                 <>
                                     <div className="flex items-center space-x-2">
@@ -169,7 +209,9 @@ const DashboardLayout = () => {
                                     <div className="flex items-center space-x-2 mt-2">
                                         <FaCoins className="w-5 h-5 text-purple-500" />
                                         <span>
-                                            {myInfo?.totalSystemMoney?.toFixed(2) || 0} Taka (Total)
+                                            {myInfo?.balance?.toFixed(2)
+                                                || myInfo?.totalSystemMoney?.toFixed(2)
+                                                || 0} Taka (Total)
                                         </span>
                                     </div>
                                 </>

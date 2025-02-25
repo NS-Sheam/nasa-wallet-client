@@ -3,17 +3,19 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLoginMutation } from "../../redux/api/auth.api";
-
 import { jwtDecode } from "jwt-decode";
 import { setUser } from "../../redux/features/auth.Slice";
 import { useDispatch } from "react-redux";
+import Logo from "../../components/Logo";
+
+const testUsers = [
+    { role: "Admin", email: "admin@gmail.com", password: "123456" },
+    { role: "Agent", email: "sakib@gmail.com", password: "123456" },
+    { role: "User", email: "customer3@gmail.com", password: "123456" },
+];
 
 const Login = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [login, { isLoading }] = useLoginMutation();
@@ -28,6 +30,11 @@ const Login = () => {
         setDeviceId(storedDeviceId);
     }, []);
 
+    const handleTestUserClick = (user) => {
+        setValue("mobileNumberOrEmail", user.email);
+        setValue("password", user.password);
+    };
+
     const onSubmit = async (data) => {
         const toastId = toast.loading("Logging in...");
 
@@ -36,20 +43,17 @@ const Login = () => {
             const res = await login(payload);
 
             if (res.error) {
-                // throw new Error(res.error.data?.message || "Login failed");
                 toast.update(toastId, {
                     render: res.error.data?.message || "Login failed",
                     type: "error",
                     isLoading: false,
                     autoClose: 3000,
                 });
-
+                return;
             }
 
             if (res?.data?.data?.accessToken) {
                 const decoded = jwtDecode(res?.data?.data?.accessToken);
-
-
                 dispatch(setUser({ user: decoded, token: res?.data?.data?.accessToken }));
 
                 toast.update(toastId, {
@@ -58,6 +62,7 @@ const Login = () => {
                     isLoading: false,
                     autoClose: 3000,
                 });
+
                 switch (decoded.role) {
                     case "customer":
                         navigate("/customer/dashboard");
@@ -71,10 +76,7 @@ const Login = () => {
                     default:
                         navigate("/login");
                 }
-
             }
-
-
         } catch (error) {
             toast.update(toastId, {
                 render: "Failed to login. Please check your credentials.",
@@ -86,12 +88,40 @@ const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-blue-600">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-blue-600">
             <div className="w-full max-w-md p-8 space-y-6 rounded-lg shadow-2xl bg-white">
-                {/* Logo or App Name */}
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold text-blue-600">Money Wallet</h1>
-                    <p className="text-gray-600 mt-2">Secure and Fast Transactions</p>
+                <Logo />
+
+                {/* Test Users Table */}
+                <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-center mb-2">Test Credentials</h3>
+                    <table className="w-full border border-gray-300 text-sm">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="py-2 border">Role</th>
+                                <th className="py-2 border">Email</th>
+                                <th className="py-2 border">Password</th>
+                                <th className="py-2 border">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {testUsers.map((user, index) => (
+                                <tr key={index} className="text-center hover:bg-gray-100">
+                                    <td className="py-2 border">{user.role}</td>
+                                    <td className="py-2 border">{user.email}</td>
+                                    <td className="py-2 border">{user.password}</td>
+                                    <td className="py-2 border">
+                                        <button
+                                            onClick={() => handleTestUserClick(user)}
+                                            className="px-3 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
+                                        >
+                                            Use
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
 
                 {/* Login Form */}

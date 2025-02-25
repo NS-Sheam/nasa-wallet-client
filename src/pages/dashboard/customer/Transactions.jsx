@@ -27,7 +27,7 @@ const Transactions = () => {
                         </thead>
                         <tbody>
                             {transactions.map((transaction) => (
-                                <tr key={transaction.id} className="border-b hover:bg-gray-50">
+                                <tr key={transaction._id} className="border-b hover:bg-gray-50">
                                     <td className="py-2 px-4 text-gray-800">{transaction?.transactionId}</td>
                                     <td className="py-2 px-4 text-gray-800">{transaction.type}</td>
                                     <td className="py-2 px-4 text-gray-600">{transaction.amount} Taka</td>

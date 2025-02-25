@@ -1,58 +1,52 @@
 import { useForm } from "react-hook-form";
-import { useSendMoneyMutation } from "../../../redux/api/transaction.api";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { useGetMyInfoQuery } from "../../../redux/api/auth.api";
-import Logo from "../../../components/Logo";
 
-const SendMoney = () => {
+import { toast } from "react-toastify";
+import { useChangePasswordMutation } from "../../redux/api/auth.api";
+import { useAppSelector } from "../../redux/hooks";
+import { selectCurrentUser } from "../../redux/features/auth.Slice";
+import logout from "../../utils/logout";
+import { useNavigate } from "react-router-dom";
+import Logo from "../../components/Logo";
+
+
+const ChangePassword = () => {
     const {
         register,
         handleSubmit,
-        reset,
         formState: { errors },
     } = useForm();
-    const [sendMoney] = useSendMoneyMutation();
-    const { data } = useGetMyInfoQuery();
-
-    const myInfo = data?.data;
+    const [changePassword] = useChangePasswordMutation();
+    const navigate = useNavigate();
 
     const onSubmit = async (data) => {
-        const toastId = toast.loading("Sending money...");
-        const { recipientMobile, amount } = data;
-
-        if (parseFloat(amount) < 50) {
-            toast.error("Minimum amount is 50 Taka!");
-            return;
-        }
+        const toastId = toast.loading("Changing password...");
 
         try {
-            const payload = {
-                senderMobile: myInfo?.user?.mobileNumber,
-                receiverMobile: recipientMobile,
-                amount: parseFloat(amount),
-            };
 
-            const res = await sendMoney(payload);
+            const res = await changePassword(data);
+
+
             if (res.error) {
                 toast.update(toastId, {
-                    render: res.error.data?.message || "Login failed",
+                    render: res.error.data?.message || "Failed to change password",
                     type: "error",
                     isLoading: false,
                     autoClose: 3000,
                 });
                 return;
             }
+
             toast.update(toastId, {
-                render: "Money sent successfully!",
+                render: "Password changed successfully!",
                 type: "success",
                 isLoading: false,
                 autoClose: 3000,
             });
-            reset();
+            logout();
+            navigate("/login");
         } catch (error) {
             toast.update(toastId, {
-                render: "Failed to send money",
+                render: "Failed to change password",
                 type: "error",
                 isLoading: false,
                 autoClose: 3000,
@@ -65,51 +59,47 @@ const SendMoney = () => {
             <div className="w-full max-w-md p-8 space-y-6 rounded-lg shadow-2xl bg-white border border-gray-200">
                 <Logo />
 
-                {/* Send Money Form */}
+                {/* Change Password Form */}
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            Recipient's Mobile Number
+                            Old Password
                         </label>
                         <input
-                            type="text"
-                            {...register("recipientMobile", { required: true })}
-                            placeholder="Enter recipient's mobile number"
+                            type="password"
+                            {...register("oldPassword", { required: true })}
+                            placeholder="Enter your old password"
                             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         />
-                        {errors.recipientMobile && (
+                        {errors.oldPassword && (
                             <span className="text-sm text-red-600">This field is required</span>
                         )}
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            Amount
+                            New Password
                         </label>
                         <input
-                            type="number"
-                            {...register("amount", { required: true, min: 50 })}
-                            placeholder="Enter amount"
+                            type="password"
+                            {...register("newPassword", { required: true, minLength: 6 })}
+                            placeholder="Enter your new password"
                             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         />
-                        {errors.amount && (
+                        {errors.newPassword && (
                             <span className="text-sm text-red-600">
-                                {errors.amount.type === "required"
+                                {errors.newPassword.type === "required"
                                     ? "This field is required"
-                                    : "Minimum amount is 50 Taka"}
+                                    : "Password must be at least 6 characters long"}
                             </span>
                         )}
-                        {/* Add a note about the 5 taka fee */}
-                        <p className="text-sm text-gray-500 mt-1">
-                            A fee of 5 taka will be deducted for transactions over 100 taka.
-                        </p>
                     </div>
 
                     <button
                         type="submit"
                         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                        Send Money
+                        Change Password
                     </button>
                 </form>
             </div>
@@ -117,4 +107,4 @@ const SendMoney = () => {
     );
 };
 
-export default SendMoney;
+export default ChangePassword;

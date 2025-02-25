@@ -11,8 +11,8 @@ const AgentDashboard = () => {
         totalCashInRequests: dashboardData?.totalCashInRequests || 0,
         totalCashOutRequests: dashboardData?.totalCashOutRequests || 0,
         totalTransactions: dashboardData?.totalTransactions || 0,
-        agentBalance: dashboardData?.agentBalance || 0,
-        agentIncome: dashboardData?.agentIncome || 0,
+        agentBalance: dashboardData?.agentBalance.toFixed(2) || 0,
+        agentIncome: dashboardData?.agentIncome.toFixed(2) || 0,
         pendingRequests: dashboardData?.pendingRequests || 0,
         approvedRequests: dashboardData?.approvedRequests || 0,
     };

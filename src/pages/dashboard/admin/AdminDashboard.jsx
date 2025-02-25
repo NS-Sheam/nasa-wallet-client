@@ -10,8 +10,8 @@ const AdminDashboard = () => {
     const stats = {
         totalUsers: dashboardData?.totalUsers || 0,
         totalAgents: dashboardData?.totalAgents || 0,
-        totalBalance: dashboardData?.totalBalance || 0,
-        totalIncome: dashboardData?.totalIncome || 0,
+        totalBalance: dashboardData?.totalBalance.toFixed(2) || 0,
+        totalIncome: dashboardData?.totalIncome.toFixed(2) || 0,
         pendingRequests: dashboardData?.pendingRequests || 0,
         approvedRequests: dashboardData?.approvedRequests || 0,
         rejectedRequests: dashboardData?.totalSystemMoneyRequests - (dashboardData?.approvedRequests || 0) - (dashboardData?.pendingRequests || 0) || 0,

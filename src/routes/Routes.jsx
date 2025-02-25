@@ -18,6 +18,9 @@ import SendMoney from "../pages/dashboard/customer/SendModey";
 import CashOut from "../pages/dashboard/customer/CashOut";
 import CashIn from "../pages/dashboard/customer/CashIn";
 import Transactions from "../pages/dashboard/customer/Transactions";
+import Profile from "../pages/dashboard/Profile";
+import ChangePassword from "../pages/dashboard/ChangePassword";
+import Home from "../pages/Home";
 
 
 function ApplicationRoutes() {
@@ -26,7 +29,7 @@ function ApplicationRoutes() {
             <Router>
                 <Routes>
                     {/* Public Routes */}
-                    <Route path="/" element={<Login />} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
 
@@ -36,8 +39,10 @@ function ApplicationRoutes() {
                             <Route path="/customer/dashboard" element={<DashboardHome />} />
                             <Route path="/customer/send-money" element={<SendMoney />} />
                             <Route path="/customer/cash-out" element={<CashOut />} />
-                            <Route path="/customer/cash-in" element={<CashIn />} />
+                            {/* <Route path="/customer/cash-in" element={<CashIn />} /> */}
                             <Route path="/customer/transactions" element={<Transactions />} />
+                            <Route path="/customer/change-password" element={<ChangePassword />} />
+                            <Route path="/customer/profile" element={<Profile />} />
                         </Route>
                     </Route>
 
@@ -51,6 +56,8 @@ function ApplicationRoutes() {
                                 path="/agent/balance-request"
                                 element={<AgentBalanceRequest />}
                             />
+                            <Route path="/agent/change-password" element={<ChangePassword />} />
+                            <Route path="/agent/profile" element={<Profile />} />
                         </Route>
                     </Route>
 
@@ -69,6 +76,8 @@ function ApplicationRoutes() {
                                 path="/admin/withdraw-requests"
                                 element={<AdminWithdrawRequests />}
                             />
+                            <Route path="/admin/change-password" element={<ChangePassword />} />
+                            <Route path="/admin/profile" element={<Profile />} />
 
                         </Route>
                     </Route>

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useCashInMutation } from "../../../redux/api/transaction.api";
 import { toast } from "react-toastify";
 import { useGetMyInfoQuery } from "../../../redux/api/auth.api";
+import Logo from "../../../components/Logo";
 
 const AgentCashIn = () => {
     const {
@@ -63,10 +64,9 @@ const AgentCashIn = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="w-full max-w-md p-8 space-y-6 rounded-lg shadow-2xl bg-white border border-gray-200">
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold text-blue-600">Money Wallet</h1>
-                    <p className="text-gray-600 mt-2">Fast and Secure Cash-In</p>
-                </div>
+                <Logo
+                    tagLine="Fast and Secure Cash-In"
+                />
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 

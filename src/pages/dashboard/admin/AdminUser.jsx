@@ -102,14 +102,14 @@ const AdminUsers = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {users?.map((user) => (
-                                <tr key={user._id} className="border-b hover:bg-gray-50">
-                                    <td className="py-2 px-4">{user._id}</td>
-                                    <td className="py-2 px-4 text-gray-800">{user.name}</td>
-                                    <td className="py-2 px-4 text-gray-600">{user.email}</td>
-                                    <td className="py-2 px-4 text-gray-800">{user.balance} Taka</td>
+                            {users?.map((agent) => (
+                                <tr key={agent._id} className="border-b hover:bg-gray-50">
+                                    <td className="py-2 px-4">{agent._id}</td>
+                                    <td className="py-2 px-4 text-gray-800">{agent.name}</td>
+                                    <td className="py-2 px-4 text-gray-600">{agent.email}</td>
+                                    <td className="py-2 px-4 text-gray-800">{agent.balance} Taka</td>
                                     <td className="py-2 px-4">
-                                        {user.isVerified ? (
+                                        {agent?.user?.isVerified ? (
                                             <span className="text-green-500">Verified</span>
                                         ) : (
                                             <span className="text-yellow-500">Pending</span>
@@ -117,9 +117,9 @@ const AdminUsers = () => {
                                     </td>
                                     <td className="py-2 px-4">
                                         {
-                                            !user.isVerified && (
+                                            !agent?.user?.isVerified && (
                                                 <button
-                                                    onClick={() => handleVerifyUser(user._id)}
+                                                    onClick={() => handleVerifyagent(agent?.user?._id)}
                                                     className="text-blue-500 hover:underline mr-4"
                                                 >
                                                     Verify
@@ -127,14 +127,14 @@ const AdminUsers = () => {
                                             )
                                         }
                                         <button
-                                            onClick={() => handleToggleUserStatus(user?._id)}
+                                            onClick={() => handleToggleUserStatus(agent?.user?._id)}
 
                                             className="text-red-500 hover:underline mr-4"
                                         >
-                                            {user.isActive ? "Block" : "Unblock"}
+                                            {agent?.user?.isActive ? "Block" : "Unblock"}
                                         </button>
                                         <button
-                                            onClick={() => handleViewTransactions(user)}
+                                            onClick={() => handleViewTransactions(agent)}
                                             className="text-gray-500 hover:underline"
                                         >
                                             View Transactions
