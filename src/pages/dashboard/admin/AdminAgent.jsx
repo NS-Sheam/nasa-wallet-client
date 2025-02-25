@@ -7,12 +7,17 @@ import { useGetAllTransactionsQuery } from "../../../redux/api/transaction.api";
 import CommonModal from "../../../components/CommonModal";
 
 const AdminAgents = () => {
-    const { data, isLoading, isError, error } = useGetAllAgentsQuery();
     const [verifyUser] = useVerifyUserMutation();
     const [toggleUserStatus] = useToggleUserStatusMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [mobileNumber, setMobileNumber] = useState("");
     const [selectedAgent, setSelectedAgent] = useState(null);
+    const userSearchQuery = []
 
+    if (mobileNumber) {
+        userSearchQuery.push({ name: "mobileNumber", value: mobileNumber });
+    }
+    const { data, isLoading, isError, error } = useGetAllAgentsQuery(userSearchQuery);
     const searchQuery = selectedAgent ? [{ name: "userId", value: selectedAgent.user._id }] : [];
 
     const { data: transactionData, isLoading: transactionIsLoading, isError: transactionIsError, error: transactionError } = useGetAllTransactionsQuery(searchQuery);
@@ -22,6 +27,7 @@ const AdminAgents = () => {
     }
 
     const agents = data?.data;
+
 
     const handleVerifyUser = async (id) => {
         const toastId = toast.loading("Verifying user...");
@@ -89,6 +95,7 @@ const AdminAgents = () => {
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <h1 className="text-4xl font-semibold text-gray-800 mb-6">Agents</h1>
+            <input type="text" placeholder="Search under contraction" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} className="p-1 mb-4 border outline-none border-gray-200 w-56 bg-white" />
             <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full text-sm">

@@ -8,19 +8,29 @@ import { useGetAllTransactionsQuery } from "../../../redux/api/transaction.api";
 
 
 const AdminUsers = () => {
-    const { data, isLoading, isError, error } = useGetAllCustomersQuery();
     const [verifyUser] = useVerifyUserMutation();
     const [toggleUserStatus] = useToggleUserStatusMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [mobileNumber, setMobileNumber] = useState("");
+    const userSearchQuery = []
+
+    if (mobileNumber) {
+        userSearchQuery.push({ name: "mobileNumber", value: mobileNumber });
+    }
+
+    const { data, isLoading, isError, error } = useGetAllCustomersQuery(userSearchQuery);
 
     const searchQuery = selectedUser ? [{ name: "userId", value: selectedUser?.user._id }] : [];
     const { data: transactionData, isLoading: transactionIsLoading, isError: transactionIsError, error: transactionError } = useGetAllTransactionsQuery(searchQuery);
+    console.log(isLoading, isError, error);
+
     if (isLoading || isError) {
         return <CommonLoaderError title="Users" isLoading={isLoading} isError={isError} error={error} />;
     }
 
     const users = data?.data;
+
 
     const handleVerifyUser = async (id) => {
         const toastId = toast.loading("Verifying user...");
@@ -88,6 +98,7 @@ const AdminUsers = () => {
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <h1 className="text-4xl font-semibold text-gray-800 mb-6">Users</h1>
+            <input type="text" placeholder="Search under contraction" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} className="p-1 mb-4 border outline-none border-gray-200 w-56 bg-white" />
             <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full text-sm">
@@ -95,7 +106,7 @@ const AdminUsers = () => {
                             <tr>
                                 <th className="py-2 px-4 text-left">ID</th>
                                 <th className="py-2 px-4 text-left">Name</th>
-                                <th className="py-2 px-4 text-left">Email</th>
+                                <th className="py-2 px-4 text-left">Mobile Number</th>
                                 <th className="py-2 px-4 text-left">Balance</th>
                                 <th className="py-2 px-4 text-left">Status</th>
                                 <th className="py-2 px-4 text-left">Actions</th>
@@ -106,8 +117,8 @@ const AdminUsers = () => {
                                 <tr key={agent._id} className="border-b hover:bg-gray-50">
                                     <td className="py-2 px-4">{agent._id}</td>
                                     <td className="py-2 px-4 text-gray-800">{agent.name}</td>
-                                    <td className="py-2 px-4 text-gray-600">{agent.email}</td>
-                                    <td className="py-2 px-4 text-gray-800">{agent.balance} Taka</td>
+                                    <td className="py-2 px-4 text-gray-600">{agent?.user?.mobileNumber}</td>
+                                    <td className="py-2 px-4 text-gray-800">{agent.balance.toFixed(2)} Taka</td>
                                     <td className="py-2 px-4">
                                         {agent?.user?.isVerified ? (
                                             <span className="text-green-500">Verified</span>

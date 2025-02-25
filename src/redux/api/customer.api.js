@@ -3,10 +3,19 @@ import { baseApi } from "./baseApi";
 const customerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllCustomers: builder.query({
-      query: () => ({
-        url: "/customers",
-        method: "GET",
-      }),
+      query: (args) => {
+        const params = new URLSearchParams();
+        if (args) {
+          args.forEach((item) => {
+            params.append(item.name, item.value);
+          });
+        }
+        return {
+          url: `/customers`,
+          method: "GET",
+          params: params,
+        };
+      },
       transformResponse: (response) => {
         return {
           data: response.data,
