@@ -5,6 +5,8 @@ export const tagTypes = {
   customer: "customer",
   transaction: "transaction",
   dashboard: "dashboard",
+  cashInRequest: "cashInRequest",
+  cashOutRequest: "cashOutRequest",
 };
 
 export const tagTypeList = Object.values(tagTypes);
