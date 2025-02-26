@@ -80,11 +80,11 @@ const Profile = () => {
                             <>
                                 <div className="flex items-center space-x-2">
                                     <FaMoneyBillAlt className="w-5 h-5 text-gray-600" />
-                                    <p><span className="font-semibold">Total System Money:</span> {userInfo?.totalSystemMoney} Taka</p>
+                                    <p><span className="font-semibold">Total System Money:</span> {userInfo?.totalSystemMoney.toFixed(2)} Taka</p>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <FaMoneyBillAlt className="w-5 h-5 text-gray-600" />
-                                    <p><span className="font-semibold">Income:</span> {userInfo?.income} Taka</p>
+                                    <p><span className="font-semibold">Income:</span> {userInfo?.income.toFixed(2)} Taka</p>
                                 </div>
                             </>
                         )}

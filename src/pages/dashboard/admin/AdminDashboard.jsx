@@ -14,8 +14,9 @@ const AdminDashboard = () => {
         totalIncome: dashboardData?.totalIncome.toFixed(2) || 0,
         pendingRequests: dashboardData?.pendingRequests || 0,
         approvedRequests: dashboardData?.approvedRequests || 0,
-        rejectedRequests: dashboardData?.totalSystemMoneyRequests - (dashboardData?.approvedRequests || 0) - (dashboardData?.pendingRequests || 0) || 0,
+        rejectedRequests: dashboardData?.rejectedRequests || 0,
     };
+
 
     if (isDashboardDataLoading) {
         return <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">Loading...</div>;

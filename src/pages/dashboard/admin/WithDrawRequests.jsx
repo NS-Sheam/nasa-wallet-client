@@ -1,13 +1,56 @@
+
+import { toast } from "react-toastify";
+import CommonLoaderError from "../../../components/CommonLoaderError";
+import { useGetAllCashOutRequestsQuery, useUpdateCashOutRequestMutation } from "../../../redux/api/cashOutRequest.api";
+
 const AdminWithdrawRequests = () => {
-    const requests = [
-        { id: 1, agentName: "Agent 1", amount: 500, date: "2023-10-01", status: "pending" },
-        { id: 2, agentName: "Agent 2", amount: 1000, date: "2023-10-02", status: "approved" },
-        { id: 3, agentName: "Agent 3", amount: 750, date: "2023-10-03", status: "rejected" },
-    ];
+    const { data, isLoading, isError, error } = useGetAllCashOutRequestsQuery();
+    const requests = data?.data;
+
+    const [updateCashOutStatus] = useUpdateCashOutRequestMutation();
+
+
+    if (isLoading || isError) {
+        return <CommonLoaderError title="Withdraw Requests" isLoading={isLoading} isError={isError} error={error} />;
+    }
+
+    const handleStatusUpdate = async (id, status) => {
+        const toastId = toast.loading("Updating request status...");
+
+        try {
+            const res = await updateCashOutStatus({ id, status });
+
+
+            if (res.error) {
+                toast.update(toastId, {
+                    render: res.error.data?.message || "Failed to update status",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 3000,
+                });
+                return;
+            }
+            toast.update(toastId, {
+                render: `Request ${status} successfully!`,
+                type: "success",
+                isLoading: false,
+                autoClose: 3000,
+            });
+        } catch (error) {
+            toast.update(toastId, {
+                render: "Failed to update status",
+                type: "error",
+                isLoading: false,
+                autoClose: 3000,
+            });
+        } finally {
+            setUpdatingId(null);
+        }
+    };
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
-            <h1 className="text-4xl font-semibold text-gray-800 mb-6">Withdraw Requests</h1>
+            <h1 className="text-4xl font-semibold text-gray-800 mb-6">Balance Requests</h1>
             <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full text-sm">
@@ -15,29 +58,48 @@ const AdminWithdrawRequests = () => {
                             <tr>
                                 <th className="py-2 px-4 text-left">ID</th>
                                 <th className="py-2 px-4 text-left">Agent Name</th>
+                                <th className="py-2 px-4 text-left">Mobile Number</th>
                                 <th className="py-2 px-4 text-left">Amount</th>
                                 <th className="py-2 px-4 text-left">Date</th>
                                 <th className="py-2 px-4 text-left">Status</th>
+                                <th className="py-2 px-4 text-left">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {requests.map((request) => (
+                            {requests?.map((request) => (
                                 <tr key={request.id} className="border-b hover:bg-gray-50">
-                                    <td className="py-2 px-4">{request.id}</td>
-                                    <td className="py-2 px-4 text-gray-800">{request.agentName}</td>
+                                    <td className="py-2 px-4">{request._id}</td>
+                                    <td className="py-2 px-4 text-gray-800">{request.agent.name}</td>
+                                    <td className="py-2 px-4">{request?.agent?.user?.mobileNumber}</td>
                                     <td className="py-2 px-4 text-gray-800">{request.amount} Taka</td>
-                                    <td className="py-2 px-4">{request.date}</td>
+                                    <td className="py-2 px-4">{new Date(request.date).toLocaleDateString()}</td>
                                     <td className="py-2 px-4">
-                                        <span
-                                            className={`${request.status === "approved"
-                                                    ? "text-green-500"
-                                                    : request.status === "pending"
-                                                        ? "text-yellow-500"
-                                                        : "text-red-500"
-                                                }`}
-                                        >
-                                            {request.status}
-                                        </span>
+                                        <span className={`${request.status === "completed"
+                                            ? "text-green-500"
+                                            : request.status === "pending"
+                                                ? "text-yellow-500"
+                                                : "text-red-500"}`}>{request.status}</span>
+                                    </td>
+                                    <td className="py-2 px-4">
+                                        {request.status === "pending" && (
+                                            <>
+                                                <button
+                                                    onClick={() => handleStatusUpdate(request._id, "completed")}
+                                                    className="text-green-500 hover:underline mr-4"
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    onClick={() => handleStatusUpdate(request._id, "rejected")}
+                                                    className="text-red-500 hover:underline mr-4"
+                                                >
+                                                    Reject
+                                                </button>
+
+
+
+                                            </>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
